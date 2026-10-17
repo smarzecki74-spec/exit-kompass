@@ -1,0 +1,158 @@
+{
+  "settings": {
+    "whatsappNumber": "4917661726407",
+    "whatsappMessage": "Hey Collin, ich hätte gerne das E-Book Exit Kompass. Grüße, {name}",
+    "leadEndpoint": "",
+    "contactName": "Collin Osana"
+  },
+  "header": {
+    "brandName": "EXIT-KOMPASS.de",
+    "brandTagline": "Freiheit mit System",
+    "ctaText": "Jetzt E-Book anfordern"
+  },
+  "hero": {
+    "badge": "Exklusives E-Book & Mentoring",
+    "title": "Raus aus dem Hamsterrad – <span class='gold-text'>Freiheit mit System</span>",
+    "subtitle": "Der konkrete Fahrplan für Unternehmer, Auswanderer und Leistungsträger, die ihre Steuerlast legal reduzieren, Rechtssicherheit schaffen und ortsunabhängig leben wollen.",
+    "highlights": ["Auf Basis geltender Gesetze", "Keine Halbwahrheiten", "Direkt per WhatsApp"],
+    "ctaText": "Deinen Namen eintragen und dein E-Book per WhatsApp erhalten",
+    "formBadge": "Kostenlos",
+    "formHeadline": "Sichere dir jetzt deinen kostenlosen Leitfaden",
+    "formText": "Trag deinen Vornamen und deine Mobilnummer ein – danach öffnet sich WhatsApp und du bekommst das E-Book persönlich zugeschickt.",
+    "guarantee": "100% vertraulich. Kein Spam. Zustellung via WhatsApp."
+  },
+  "problem": {
+    "badge": "Erkennst du dich hier wieder?",
+    "title": "Verdienst du viel, aber dir bleibt gefühlt zu wenig persönliche Freiheit?",
+    "intro": "Viele Leistungsträger stehen vor denselben Hürden:",
+    "points": [
+      {
+        "icon": "account_balance",
+        "title": "Erdrückende Abgabenlast",
+        "desc": "Du arbeitest gefühlt bis Mitte des Jahres nur für Steuern und Abgaben, ohne echte Gegenleistung oder Wertschätzung zu erfahren."
+      },
+      {
+        "icon": "gavel",
+        "title": "Bürokratie & Überregulierung",
+        "desc": "Ständig neue Vorschriften, Gesetze und Zukunftsunsicherheiten hemmen dein Wachstum und dein persönliches Sicherheitsgefühl."
+      },
+      {
+        "icon": "flight_takeoff",
+        "title": "Gefangen im Standort Deutschland",
+        "desc": "Du wünschst dir mehr geografische Flexibilität und Lebensqualität, weißt aber nicht, wie du den Ausstieg rechtssicher und strukturiert umsetzt."
+      }
+    ]
+  },
+  "pillars": {
+    "badge": "Das Fundament",
+    "title": "Die 3 Säulen des <span class='gold-text'>Exit Kompass</span>",
+    "subtitle": "Ein ganzheitliches System für finanzielle und persönliche Unabhängigkeit.",
+    "ctaText": "Jetzt E-Book per WhatsApp anfordern",
+    "items": [
+      {
+        "icon": "shield",
+        "title": "1. Rechtssicherheit",
+        "desc": "Vermeide teure Fallstricke bei Wegzugsbesteuerung, Abmeldung und internationaler Firmengründung – sauber geplant und dokumentiert."
+      },
+      {
+        "icon": "trending_up",
+        "title": "2. Steueroptimierung",
+        "desc": "Strukturiere dein Vermögen und dein Business so, dass du deine Steuerlast im Rahmen der Gesetze deutlich reduzierst."
+      },
+      {
+        "icon": "palms",
+        "title": "3. Lebensqualität",
+        "desc": "Finde den Standort, der zu deinem Lebensstil passt: hohe Sicherheit, gute Infrastruktur und maximale Freiheit."
+      }
+    ]
+  },
+  "mentor": {
+    "badge": "Dein Mentor",
+    "title": "Wer steht hinter dem Exit Kompass?",
+    "name": "Collin Osana",
+    "role": "Gründer & Experte für internationale Standortoptimierung",
+    "photo": "",
+    "bio": "Vor wenigen Jahren stand ich vor exakt derselben Entscheidung. Nach jahrelanger Praxis und hunderten Beratungstagen habe ich ein praxiserprobtes Framework entwickelt, das Unternehmern hilft, den Systemausstieg legal, sicher und ohne Stress umzusetzen.",
+    "ctaText": "Kostenloses E-Book anfordern",
+    "stats": [
+      { "value": "100+", "label": "Erfolgreiche Auswanderungen" },
+      { "value": "0%", "label": "Einkommensteuer in ausgewählten Ländern" },
+      { "value": "100%", "label": "Praxiserprobtes System" }
+    ]
+  },
+  "modules": {
+    "badge": "Inhalte des E-Books",
+    "title": "Was dich im <span class='gold-text'>Exit Kompass</span> erwartet",
+    "subtitle": "Kompaktes Wissen, direkt auf den Punkt gebracht.",
+    "ctaText": "Ratgeber jetzt per WhatsApp sichern",
+    "items": [
+      {
+        "title": "Modul 1: Die perfekte Vorbereitung & Strategie",
+        "desc": "Lerne, wie du dein Unternehmen und deine privaten Vermögenswerte optimal auf den Schritt vorbereitest."
+      },
+      {
+        "title": "Modul 2: Die besten Länder im Vergleich",
+        "desc": "Detaillierte Analyse von Dubai, Zypern, Panama, Paraguay, Portugal & mehr – inklusive Vor- und Nachteilen."
+      },
+      {
+        "title": "Modul 3: Wegzugsbesteuerung & unbeschränkte Steuerpflicht",
+        "desc": "Schritt für Schritt: wie du die unbeschränkte Steuerpflicht sauber beendest und die Wegzugsbesteuerung frühzeitig einplanst – ohne bürokratische Überraschungen."
+      },
+      {
+        "title": "Modul 4: Banken, Konten & internationale Strukturen",
+        "desc": "Wie du international Bankkonten eröffnest, dein Vermögen absicherst und Zahlungsströme reibungslos aufrechterhältst."
+      }
+    ]
+  },
+  "testimonials": {
+    "badge": "Erfolgsgeschichten",
+    "title": "Das sagen andere Unternehmer",
+    "ctaText": "Deinen persönlichen Exit-Plan erhalten",
+    "items": [
+      {
+        "quote": "Der Exit Kompass hat mir extrem viel Zeit und zehntausende Euro an Fehlinvestitionen erspart. Absolutes Pflichtwissen!",
+        "author": "Markus S.",
+        "role": "Agenturinhaber"
+      },
+      {
+        "quote": "Binnen 6 Monaten haben wir unseren Firmensitz verlegt und genießen nun ein völlig neues Freiheitsgefühl mit der Familie.",
+        "author": "Elena K.",
+        "role": "E-Commerce Gründerin"
+      }
+    ]
+  },
+  "faq": {
+    "badge": "Häufige Fragen",
+    "title": "Fragen & Antworten",
+    "ctaText": "E-Book per WhatsApp anfordern",
+    "items": [
+      {
+        "question": "Ist das wirklich 100% legal?",
+        "answer": "Ja. Der Exit Kompass basiert ausschließlich auf bestehenden Gesetzen und internationalen Doppelbesteuerungsabkommen (DBA). Für deine konkrete Umsetzung empfehlen wir zusätzlich immer die Abstimmung mit einem Steuerberater."
+      },
+      {
+        "question": "Ist die Strategie auch für Familien mit Kindern geeignet?",
+        "answer": "Absolut. Wir beleuchten gezielt Schulsysteme, internationale Gesundheitsversorgung, Sicherheit und Lebensqualität für die ganze Familie."
+      },
+      {
+        "question": "Funktioniert das System auch, wenn mein Business nicht 100% digital ist?",
+        "answer": "Ja. Auch für klassische Unternehmen mit Sachwerten, Personal vor Ort oder Immobilien gibt es klare Umstrukturierungsmodelle und Holding-Leitfäden."
+      },
+      {
+        "question": "Wie erhalte ich das E-Book?",
+        "answer": "Trag einfach deinen Vornamen und deine Mobilnummer ein. Danach öffnet sich WhatsApp mit einer vorbereiteten Nachricht – das E-Book bekommst du dann persönlich zugeschickt."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Bereit für deinen persönlichen Exit?",
+    "text": "Sichere dir jetzt deinen kostenlosen Ratgeber per WhatsApp und starte deinen Weg in die Unabhängigkeit.",
+    "ctaText": "Jetzt E-Book anfordern"
+  },
+  "footer": {
+    "copyright": "© 2026 EXIT-KOMPASS.de. Alle Rechte vorbehalten.",
+    "disclaimer": "Die Inhalte dieser Website und des E-Books dienen der allgemeinen Information und ersetzen keine individuelle Steuer- oder Rechtsberatung.",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz"
+  }
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exit Kompass – Freiheit mit System | Kostenloses E-Book</title>
+  <meta name="description" content="Der konkrete Fahrplan für Unternehmer, Auswanderer und Leistungsträger: Steuerlast legal reduzieren, Rechtssicherheit schaffen, ortsunabhängig leben. Kostenloses E-Book per WhatsApp.">
+  <meta name="theme-color" content="#0F172A">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Exit Kompass – Freiheit mit System">
+  <meta property="og:description" content="Kostenloses E-Book: Der Fahrplan für Unternehmer, Auswanderer und Leistungsträger.">
+  <meta property="og:locale" content="de_DE">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/content.json" as="fetch" crossorigin>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body class="bg-brand-dark font-sans text-slate-100 antialiased selection:bg-brand-gold selection:text-white">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-brand-dark/85 px-4 py-3 backdrop-blur-md lg:px-8">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-3" aria-label="Zur Startseite">
+        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-goldHover to-brand-gold text-white shadow-lg shadow-brand-gold/20" data-icon="explore" data-icon-class="w-6 h-6"></span>
+        <span>
+          <span class="block text-lg font-extrabold leading-none tracking-tight text-white sm:text-xl" data-html="header.brandName">EXIT-KOMPASS.de</span>
+          <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-400" data-text="header.brandTagline">Freiheit mit System</span>
+        </span>
+      </a>
+      <button type="button" class="btn-gold hidden !px-5 !py-2.5 !text-sm sm:inline-flex" data-open-drawer>
+        <span data-text="header.ctaText">Jetzt E-Book anfordern</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="bg-hero relative overflow-hidden border-b border-slate-800/60 pb-20 pt-12 md:pb-32 md:pt-20">
+      <div class="bg-grid pointer-events-none absolute inset-0"></div>
+      <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
+          <div class="text-center lg:col-span-7 lg:text-left">
+            <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-3.5 py-1.5">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-brand-gold"></span>
+              <span class="text-xs font-bold uppercase tracking-wide text-brand-gold sm:text-sm" data-text="hero.badge"></span>
+            </div>
+            <h1 class="mb-6 text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl lg:text-6xl" data-html="hero.title"></h1>
+            <p class="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg lg:mx-0" data-text="hero.subtitle"></p>
+            <ul id="hero-highlights" class="mx-auto grid max-w-xl grid-cols-1 gap-3 text-left sm:grid-cols-3 lg:mx-0"></ul>
+          </div>
+
+          <div class="lg:col-span-5">
+            <div class="glass-panel gold-glow relative rounded-2xl border-t-2 !border-t-brand-gold p-6 sm:p-8">
+              <div class="absolute -top-3 right-6 rounded-full bg-brand-gold px-3 py-1 text-xs font-black uppercase tracking-wider text-white shadow-md" data-text="hero.formBadge"></div>
+              <h2 class="mb-2 text-xl font-bold text-white" data-text="hero.formHeadline"></h2>
+              <p class="mb-6 text-xs leading-relaxed text-slate-300 sm:text-sm" data-text="hero.formText"></p>
+              <div data-lead-form="hero"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="border-b border-slate-200 bg-slate-50 py-16 text-slate-900 md:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto mb-14 max-w-3xl text-center">
+          <span class="eyebrow" data-text="problem.badge"></span>
+          <h2 class="mb-4 text-2xl font-bold sm:text-4xl" data-html="problem.title"></h2>
+          <p class="text-sm text-slate-600 sm:text-base" data-text="problem.intro"></p>
+        </div>
+        <div id="problem-points" class="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8"></div>
+      </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section class="relative border-b border-slate-800 bg-brand-dark py-16 md:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto mb-14 max-w-3xl text-center">
+          <span class="eyebrow" data-text="pillars.badge"></span>
+          <h2 class="mb-4 text-2xl font-bold text-white sm:text-4xl" data-html="pillars.title"></h2>
+          <p class="text-sm text-slate-400 sm:text-base" data-text="pillars.subtitle"></p>
+        </div>
+        <div id="pillar-items" class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8"></div>
+        <div class="text-center">
+          <button type="button" class="btn-gold" data-open-drawer><span data-text="pillars.ctaText"></span><span data-icon="arrow_forward"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENTOR -->
+    <section class="bg-mentor border-b border-slate-800 py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="glass-panel reveal rounded-3xl p-8 sm:p-12">
+          <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+            <div class="text-center lg:col-span-4">
+              <div id="mentor-photo" class="mx-auto mb-5"></div>
+              <h3 class="text-2xl font-bold text-white" data-text="mentor.name"></h3>
+              <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-brand-gold" data-text="mentor.role"></p>
+            </div>
+            <div class="lg:col-span-8">
+              <span class="eyebrow" data-text="mentor.badge"></span>
+              <h2 class="mb-4 text-2xl font-bold text-white sm:text-3xl" data-html="mentor.title"></h2>
+              <p class="mb-8 text-sm leading-relaxed text-slate-300 sm:text-base" data-text="mentor.bio"></p>
+              <dl id="mentor-stats" class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3"></dl>
+              <button type="button" class="btn-gold" data-open-drawer><span data-text="mentor.ctaText"></span><span data-icon="arrow_forward"></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES -->
+    <section class="border-b border-slate-200 bg-white py-16 text-slate-900 md:py-24">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mb-12 text-center">
+          <span class="eyebrow" data-text="modules.badge"></span>
+          <h2 class="mb-4 text-2xl font-bold sm:text-4xl" data-html="modules.title"></h2>
+          <p class="text-sm text-slate-600 sm:text-base" data-text="modules.subtitle"></p>
+        </div>
+        <div id="module-items" class="mb-12 space-y-4"></div>
+        <div class="text-center">
+          <button type="button" class="btn-gold" data-open-drawer><span data-text="modules.ctaText"></span><span data-icon="chat"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials-section" class="relative border-b border-slate-800 bg-slate-900 py-16 md:py-24">
+      <div class="bg-grid pointer-events-none absolute inset-0 opacity-60"></div>
+      <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto mb-14 max-w-3xl text-center">
+          <span class="eyebrow" data-text="testimonials.badge"></span>
+          <h2 class="text-2xl font-bold text-white sm:text-4xl" data-html="testimonials.title"></h2>
+        </div>
+        <div id="testimonial-items" class="mx-auto mb-12 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 md:gap-8"></div>
+        <div class="text-center">
+          <button type="button" class="btn-gold" data-open-drawer><span data-text="testimonials.ctaText"></span><span data-icon="arrow_forward"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="border-b border-slate-200 bg-slate-50 py-16 text-slate-900 md:py-24">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mb-12 text-center">
+          <span class="eyebrow" data-text="faq.badge"></span>
+          <h2 class="text-2xl font-bold sm:text-4xl" data-html="faq.title"></h2>
+        </div>
+        <div id="faq-items" class="mb-12 space-y-4"></div>
+        <div class="text-center">
+          <button type="button" class="btn-gold" data-open-drawer><span data-text="faq.ctaText"></span><span data-icon="chat"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="bg-final relative overflow-hidden py-20 text-center md:py-28">
+      <div class="reveal relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <h2 class="mb-6 text-3xl font-extrabold text-white sm:text-5xl" data-html="finalCta.title"></h2>
+        <p class="mx-auto mb-8 max-w-2xl text-base text-slate-300 sm:text-lg" data-text="finalCta.text"></p>
+        <button type="button" class="btn-gold !px-8 !py-4" data-open-drawer><span data-text="finalCta.ctaText"></span><span data-icon="arrow_forward"></span></button>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-10 text-xs text-slate-500">
+    <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <p data-text="footer.copyright"></p>
+        <nav class="flex items-center gap-6" aria-label="Rechtliches">
+          <a href="/impressum" class="transition-colors hover:text-slate-300" data-text="footer.impressum">Impressum</a>
+          <a href="/datenschutz" class="transition-colors hover:text-slate-300" data-text="footer.datenschutz">Datenschutz</a>
+        </nav>
+      </div>
+      <p class="mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-slate-600" data-text="footer.disclaimer"></p>
+    </div>
+  </footer>
+
+  <!-- FLY-IN DRAWER -->
+  <div id="drawer-backdrop" class="drawer-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm" data-close-drawer></div>
+  <aside id="drawer" class="drawer fixed right-0 top-0 z-50 flex h-full w-full flex-col justify-between overflow-y-auto border-l border-slate-800 bg-brand-dark/95 p-6 shadow-2xl backdrop-blur-xl sm:w-[450px] sm:p-8" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+    <div>
+      <div class="mb-6 flex items-center justify-between border-b border-slate-800 pb-6">
+        <span class="flex items-center gap-2 text-sm font-bold uppercase tracking-tight text-white">
+          <span class="text-brand-gold" data-icon="explore"></span>
+          <span data-html="header.brandName"></span>
+        </span>
+        <button type="button" class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800/80 text-slate-300 transition-colors hover:bg-slate-700" aria-label="Schließen" data-close-drawer>
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div class="mb-3 inline-block rounded-full bg-brand-gold px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white" data-text="hero.formBadge"></div>
+      <h2 id="drawer-title" class="mb-2 text-xl font-bold text-white" data-text="hero.formHeadline"></h2>
+      <p class="mb-6 text-xs leading-relaxed text-slate-300" data-text="hero.formText"></p>
+      <div data-lead-form="drawer"></div>
+    </div>
+    <p class="border-t border-slate-800 pt-6 text-center text-[10px] text-slate-500" data-text="header.brandTagline"></p>
+  </aside>
+
+  <noscript>
+    <div class="fixed inset-x-0 bottom-0 z-50 bg-brand-gold p-4 text-center text-sm font-semibold text-white">
+      Bitte aktiviere JavaScript, um die Seite vollständig zu sehen.
+    </div>
+  </noscript>
+
+  <script src="/assets/icons.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
