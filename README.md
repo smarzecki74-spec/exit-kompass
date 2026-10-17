@@ -2,26 +2,29 @@
 
 Statische Lead-Landingpage: Besucher tragen Vorname und Mobilnummer ein, der Lead landet im Google Sheet, danach öffnet sich WhatsApp mit einer vorbereiteten Nachricht an Collin.
 
+Hosting: **Cloudflare Pages** (Auto-Deploy aus GitHub).
+
 ## Struktur
 
 ```
-public/                 ← wird von Vercel ausgeliefert
+public/                 ← wird von Cloudflare Pages ausgeliefert (Build-Output)
   index.html            Seitengerüst
   content.json          ALLE Texte + Einstellungen (WhatsApp, Lead-Endpoint)
-  impressum.html        /impressum
+  impressum.html        /impressum   (Clean URLs macht Pages automatisch)
   datenschutz.html      /datenschutz
+  _headers              Security- und Cache-Header
   assets/app.js         Rendert die Seite aus content.json, Formular-Logik
   assets/icons.js       Icons (generiert, lokal)
   assets/styles.css     Tailwind-Build (wird beim Deploy neu gebaut)
   assets/fonts/         Lokal gehostete Schriften (DSGVO)
 src/input.css           Tailwind-Quelle + eigene Styles
 apps-script/Code.gs     Google-Apps-Script für die Lead-Speicherung
-vercel.json             Build, Clean URLs, Security-Header
+.node-version           Node-Version für den Cloudflare-Build
 ```
 
 ## Texte ändern
 
-Nur `public/content.json` bearbeiten → committen → pushen. Vercel deployt automatisch.
+Nur `public/content.json` bearbeiten → committen → pushen. Cloudflare deployt automatisch.
 
 - `settings.whatsappNumber` – Nummer ohne `+`, z. B. `4917661726407`
 - `settings.whatsappMessage` – `{name}` wird durch den Vornamen ersetzt
@@ -37,11 +40,18 @@ Nur `public/content.json` bearbeiten → committen → pushen. Vercel deployt au
 3. Web-App-URL (`…/exec`) in `content.json` → `settings.leadEndpoint` eintragen und pushen
 4. Test: Formular absenden → neue Zeile im Tab „Leads“
 
-## Deployment (GitHub → Vercel)
+## Deployment (GitHub → Cloudflare Pages)
 
-1. Repo bei [vercel.com/new](https://vercel.com/new) importieren – Framework Preset: **Other** (Rest kommt aus `vercel.json`)
-2. Jeder Push auf `main` geht live, jeder andere Branch bekommt eine Preview-URL
-3. Domain: Vercel → Project → Settings → Domains → `exit-kompass.de` + `www.exit-kompass.de` hinzufügen und DNS beim Domain-Anbieter wie angezeigt setzen
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Erstellen** → Reiter **Pages** → **Mit Git verbinden**
+2. GitHub verbinden, Repo `exit-kompass` auswählen
+3. Build-Einstellungen:
+   - Framework-Voreinstellung: **Keine**
+   - Build-Befehl: `npm run build`
+   - Build-Ausgabeverzeichnis: `public`
+4. **Speichern und bereitstellen** → live unter `exit-kompass.pages.dev`
+5. Jeder Push auf `main` geht live, jeder andere Branch bekommt eine Preview-URL
+6. Domain: Projekt → **Benutzerdefinierte Domains** → `exit-kompass.de` und `www.exit-kompass.de` hinzufügen.
+   Am einfachsten, wenn die Domain-DNS bei Cloudflare liegt (Nameserver umstellen) – dann richtet Cloudflare alles automatisch ein.
 
 ## Lokal
 

@@ -1,7 +1,7 @@
 /**
  * EXIT KOMPASS – Lead-Speicherung (Google Apps Script Web-App)
  *
- * Empfängt Leads von der Website (Vercel) per POST und schreibt sie ins Google Sheet.
+ * Empfängt Leads von der Website (Cloudflare Pages) per POST und schreibt sie ins Google Sheet.
  *
  * Deployment:
  *  1. script.google.com → Neues Projekt → diesen Code einfügen → speichern
