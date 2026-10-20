@@ -2,7 +2,8 @@
 
 Statische Lead-Landingpage: Besucher tragen Vorname und Mobilnummer ein, der Lead landet im Google Sheet, danach öffnet sich WhatsApp mit einer vorbereiteten Nachricht an Collin.
 
-Hosting: **Cloudflare Pages** (Auto-Deploy aus GitHub).
+Hosting: **Cloudflare Worker mit Static Assets** (Auto-Deploy aus GitHub, Konfiguration in `wrangler.jsonc`).
+Die API-Handler in `functions/api` sind im Pages-Functions-Format – das Projekt läuft also auch als Pages-Projekt.
 
 ## Struktur
 
@@ -67,7 +68,9 @@ Jedes **Veröffentlichen** ist ein Commit auf `main` → Cloudflare Pages baut a
 - Commits zeigen, wer was geändert hat (`CMS: Inhalte aktualisiert von collin – Notiz`)
 
 ```
-functions/api/          Cloudflare Pages Functions (Login, Inhalte, Upload)
+worker/index.js         Worker-Einstieg: /api/* → CMS-Handler, alles andere → public/
+wrangler.jsonc          Worker-Konfiguration (Name, Assets, Kompatibilitätsdatum)
+functions/api/          API-Handler (Login, Inhalte, Upload) im Pages-Functions-Format
 lib/cms.js              Gemeinsame Logik (Auth, Sitzung, GitHub-API)
 public/admin/           Editor-Oberfläche
   cms.config.js         ← einzige projektspezifische Datei (Bereiche, Beschriftungen, Feldtypen, Icons)
@@ -87,13 +90,13 @@ scripts/cms-hash.mjs    Passwort-Hashes erzeugen
    ```
    Gibt Zufallspasswörter, den Wert für `CMS_USERS` und einen `CMS_SECRET` aus.
    Eigenes Passwort: `npm run cms:hash -- 'collin=MeinLangesPasswort'`
-3. **Cloudflare:** Pages-Projekt → **Einstellungen → Variablen und Geheimnisse** → für *Production* als **Geheimnis** (verschlüsselt) anlegen:
+3. **Cloudflare:** Workers & Pages → `exit-kompass` → **Settings → Variables and Secrets** → **Add**, Typ **Secret**:
    | Name | Wert |
    |---|---|
    | `CMS_USERS` | Ausgabe von Schritt 2 (`sebastian:pbkdf2…,collin:pbkdf2…`) |
    | `CMS_SECRET` | Ausgabe von Schritt 2 |
    | `GITHUB_TOKEN` | Token aus Schritt 1 |
-4. **Neu deployen** (Deployments → letzter Deploy → *Erneut bereitstellen*), damit die Variablen greifen.
+4. Secrets greifen beim Worker sofort, kein Neu-Deploy nötig.
 5. `https://exit-kompass.de/admin` öffnen und anmelden.
 
 Optional: `GITHUB_REPO`, `GITHUB_BRANCH`, `CMS_CONTENT`, `CMS_UPLOADS` (siehe `lib/cms.js`).
@@ -118,7 +121,7 @@ npm install
 npm run build      # CSS bauen
 npm run serve      # http://localhost:3000
 npm run dev        # CSS-Watch beim Arbeiten
-npm run cms:dev    # Seite + CMS-Functions lokal (http://localhost:8788/admin)
+npm run cms:dev    # Seite + CMS lokal als Worker (http://localhost:8788/admin)
 ```
 
 Für `cms:dev` eine Datei `.dev.vars` anlegen (wird nicht committet) mit `CMS_USERS`, `CMS_SECRET`, `GITHUB_TOKEN`.
