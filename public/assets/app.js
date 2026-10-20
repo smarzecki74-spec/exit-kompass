@@ -5,6 +5,19 @@
   var C = null; // Content
   var lastFocus = null;
 
+  // CMS-Vorschau: /?cms-preview=1 liest den ungespeicherten Entwurf aus dem Admin (gleicher Browser)
+  var PREVIEW = /[?&]cms-preview=1\b/.test(location.search);
+  function loadContent() {
+    if (PREVIEW) {
+      try {
+        var draft = localStorage.getItem('cms-preview');
+        if (draft) return Promise.resolve(JSON.parse(draft));
+      } catch (e) { /* normal laden */ }
+    }
+    return fetch('/content.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+
   // ---------- Helpers ----------
   function get(obj, path) {
     return path.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj);
@@ -140,6 +153,7 @@
   }
 
   function sendLead(data) {
+    if (PREVIEW) { console.info('[Exit Kompass] Vorschau – Lead wird nicht gespeichert.'); return; }
     var url = C.settings && C.settings.leadEndpoint;
     if (!url) { console.warn('[Exit Kompass] leadEndpoint fehlt in content.json – Lead wird nicht gespeichert.'); return; }
     var body = JSON.stringify(data);
@@ -172,6 +186,7 @@
     if (!privacy) return fail('Bitte bestätige die Einwilligung zur Kontaktaufnahme.', form.elements.privacy);
 
     var btn = $('[data-submit]', form);
+    if (PREVIEW) { $('[data-label]', btn).textContent = 'Vorschau – kein Versand'; return; }
     btn.disabled = true;
     $('[data-label]', btn).textContent = 'WhatsApp wird geöffnet …';
 
@@ -240,7 +255,7 @@
 
   function revealOnScroll() {
     var els = $all('.reveal');
-    if (!('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('is-visible'); }); return; }
+    if (PREVIEW || !('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('is-visible'); }); return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
@@ -250,8 +265,7 @@
   }
 
   // ---------- Start ----------
-  fetch('/content.json', { cache: 'no-cache' })
-    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  loadContent()
     .then(function (data) {
       C = data;
       bindText();

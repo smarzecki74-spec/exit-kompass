@@ -24,7 +24,8 @@ apps-script/Code.gs     Google-Apps-Script für die Lead-Speicherung
 
 ## Texte ändern
 
-Nur `public/content.json` bearbeiten → committen → pushen. Cloudflare deployt automatisch.
+**Am einfachsten über das CMS:** `https://exit-kompass.de/admin` → anmelden → bearbeiten → **Veröffentlichen**.
+Alternativ `public/content.json` direkt bearbeiten → committen → pushen. Cloudflare deployt automatisch.
 
 - `settings.whatsappNumber` – Nummer ohne `+`, z. B. `4917661726407`
 - `settings.whatsappMessage` – `{name}` wird durch den Vornamen ersetzt
@@ -53,6 +54,63 @@ Nur `public/content.json` bearbeiten → committen → pushen. Cloudflare deploy
 6. Domain: Projekt → **Benutzerdefinierte Domains** → `exit-kompass.de` und `www.exit-kompass.de` hinzufügen.
    Am einfachsten, wenn die Domain-DNS bei Cloudflare liegt (Nameserver umstellen) – dann richtet Cloudflare alles automatisch ein.
 
+## CMS (`/admin`)
+
+Schlankes CMS ohne Datenbank: Der Editor liest und schreibt `public/content.json` direkt im GitHub-Repo.
+Jedes **Veröffentlichen** ist ein Commit auf `main` → Cloudflare Pages baut automatisch neu (ca. 1–2 Min.).
+
+- Login für mehrere Benutzer, Passwörter nur als Hash gespeichert (PBKDF2), Sitzung 8 h per signiertem Cookie
+- Live-Vorschau des Entwurfs (Desktop/Mobil), Entwürfe bleiben im Browser erhalten
+- Listen: Einträge hinzufügen, löschen (mit Rückgängig), sortieren
+- Bild-Upload (wird vor dem Upload auf max. 1200 px verkleinert) nach `public/assets/img/`
+- Konflikterkennung, wenn zwei Leute gleichzeitig veröffentlichen
+- Commits zeigen, wer was geändert hat (`CMS: Inhalte aktualisiert von collin – Notiz`)
+
+```
+functions/api/          Cloudflare Pages Functions (Login, Inhalte, Upload)
+lib/cms.js              Gemeinsame Logik (Auth, Sitzung, GitHub-API)
+public/admin/           Editor-Oberfläche
+  cms.config.js         ← einzige projektspezifische Datei (Bereiche, Beschriftungen, Feldtypen, Icons)
+  cms.js                generischer Editor
+scripts/cms-hash.mjs    Passwort-Hashes erzeugen
+```
+
+### Einrichtung (einmalig)
+
+1. **GitHub-Token:** github.com → Settings → Developer settings → **Fine-grained tokens** → Generate
+   - Repository access: *Only select repositories* → `exit-kompass`
+   - Permissions → Repository → **Contents: Read and write**
+   - Ablaufdatum notieren (danach neuen Token eintragen)
+2. **Benutzer + Secret erzeugen:**
+   ```bash
+   npm run cms:hash -- sebastian collin --secret
+   ```
+   Gibt Zufallspasswörter, den Wert für `CMS_USERS` und einen `CMS_SECRET` aus.
+   Eigenes Passwort: `npm run cms:hash -- 'collin=MeinLangesPasswort'`
+3. **Cloudflare:** Pages-Projekt → **Einstellungen → Variablen und Geheimnisse** → für *Production* als **Geheimnis** (verschlüsselt) anlegen:
+   | Name | Wert |
+   |---|---|
+   | `CMS_USERS` | Ausgabe von Schritt 2 (`sebastian:pbkdf2…,collin:pbkdf2…`) |
+   | `CMS_SECRET` | Ausgabe von Schritt 2 |
+   | `GITHUB_TOKEN` | Token aus Schritt 1 |
+4. **Neu deployen** (Deployments → letzter Deploy → *Erneut bereitstellen*), damit die Variablen greifen.
+5. `https://exit-kompass.de/admin` öffnen und anmelden.
+
+Optional: `GITHUB_REPO`, `GITHUB_BRANCH`, `CMS_CONTENT`, `CMS_UPLOADS` (siehe `lib/cms.js`).
+
+**Benutzer ändern/hinzufügen/sperren:** `CMS_USERS` neu erzeugen bzw. Eintrag entfernen, in Cloudflare ersetzen, neu deployen.
+Alle Sitzungen sofort beenden: `CMS_SECRET` austauschen.
+
+**Brute-Force-Schutz (empfohlen):** Cloudflare → Domain → Sicherheit → WAF → *Rate limiting rules* →
+Pfad gleich `/api/login`, z. B. 5 Anfragen pro 10 Sekunden → Blockieren.
+
+### Für andere Projekte wiederverwenden
+
+`functions/`, `lib/`, `public/admin/` und `scripts/cms-hash.mjs` kopieren, `cms.config.js` an die neue
+`content.json` anpassen, Variablen setzen (inkl. `GITHUB_REPO`). Felder ohne Konfiguration funktionieren
+trotzdem – Beschriftung und Feldtyp werden aus dem JSON abgeleitet. Für die Live-Vorschau muss die Seite
+bei `?cms-preview=1` den Inhalt aus `localStorage['cms-preview']` lesen (siehe `loadContent()` in `assets/app.js`).
+
 ## Lokal
 
 ```bash
@@ -60,7 +118,11 @@ npm install
 npm run build      # CSS bauen
 npm run serve      # http://localhost:3000
 npm run dev        # CSS-Watch beim Arbeiten
+npm run cms:dev    # Seite + CMS-Functions lokal (http://localhost:8788/admin)
 ```
+
+Für `cms:dev` eine Datei `.dev.vars` anlegen (wird nicht committet) mit `CMS_USERS`, `CMS_SECRET`, `GITHUB_TOKEN`.
+Achtung: Lokal veröffentlichen schreibt echt ins Repo – dafür `GITHUB_BRANCH=cms-test` setzen.
 
 ## Vor Go-live
 
@@ -69,3 +131,4 @@ npm run dev        # CSS-Watch beim Arbeiten
 - [ ] Apps Script deployen und `leadEndpoint` eintragen
 - [ ] Foto von Collin in `public/assets/img/` + `mentor.photo` setzen
 - [ ] Testlead absenden und im Sheet prüfen
+- [ ] CMS-Variablen in Cloudflare setzen, `/admin` testen, WAF-Rate-Limit auf `/api/login`
