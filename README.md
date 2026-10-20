@@ -28,7 +28,8 @@ apps-script/Code.gs     Google-Apps-Script für die Lead-Speicherung
 **Am einfachsten über das CMS:** `https://exit-kompass.de/admin` → anmelden → bearbeiten → **Veröffentlichen**.
 Alternativ `public/content.json` direkt bearbeiten → committen → pushen. Cloudflare deployt automatisch.
 
-- `settings.whatsappNumber` – Nummer ohne `+`, z. B. `4917661726407`
+- `contact.*` – Name, Anschrift, E-Mail, Telefon, WhatsApp. Erscheinen automatisch in Impressum + Datenschutz
+  (der Worker setzt sie beim Ausliefern ein). `contact.whatsapp` ist auch das Ziel des E-Book-Formulars.
 - `settings.whatsappMessage` – `{name}` wird durch den Vornamen ersetzt
 - `settings.leadEndpoint` – URL der Apps-Script-Web-App (siehe unten)
 - `mentor.photo` – z. B. `/assets/img/collin.jpg` (Datei in `public/assets/img/` legen). Leer = Initialen.
@@ -129,8 +130,7 @@ Achtung: Lokal veröffentlichen schreibt echt ins Repo – dafür `GITHUB_BRANCH
 
 ## Vor Go-live
 
-- [ ] Impressum: Anschrift + E-Mail ergänzen (rot markierte Platzhalter in `impressum.html`)
-- [ ] Datenschutz: Anschrift + E-Mail ergänzen (`datenschutz.html`)
+- [ ] CMS → **Kontakt & Impressum**: Anschrift + E-Mail ergänzen (fehlende Pflichtangaben stehen rot im Impressum)
 - [ ] Apps Script deployen und `leadEndpoint` eintragen
 - [ ] Foto von Collin in `public/assets/img/` + `mentor.photo` setzen
 - [ ] Testlead absenden und im Sheet prüfen

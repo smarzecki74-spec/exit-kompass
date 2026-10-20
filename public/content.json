@@ -1,9 +1,7 @@
 {
   "settings": {
-    "whatsappNumber": "4917661726407",
     "whatsappMessage": "Hey Collin, ich hätte gerne das E-Book Exit Kompass. Grüße, {name}",
-    "leadEndpoint": "",
-    "contactName": "Collin Osana"
+    "leadEndpoint": ""
   },
   "header": {
     "brandName": "EXIT-KOMPASS.de",
@@ -14,7 +12,11 @@
     "badge": "Exklusives E-Book & Mentoring",
     "title": "Raus aus dem Hamsterrad – <span class='gold-text'>Freiheit mit System</span>",
     "subtitle": "Der konkrete Fahrplan für Unternehmer, Auswanderer und Leistungsträger, die ihre Steuerlast legal reduzieren, Rechtssicherheit schaffen und ortsunabhängig leben wollen.",
-    "highlights": ["Auf Basis geltender Gesetze", "Keine Halbwahrheiten", "Direkt per WhatsApp"],
+    "highlights": [
+      "Auf Basis geltender Gesetze",
+      "Keine Halbwahrheiten",
+      "Direkt per WhatsApp"
+    ],
     "ctaText": "Deinen Namen eintragen und dein E-Book per WhatsApp erhalten",
     "formBadge": "Kostenlos",
     "formHeadline": "Sichere dir jetzt deinen kostenlosen Leitfaden",
@@ -75,9 +77,18 @@
     "bio": "Vor wenigen Jahren stand ich vor exakt derselben Entscheidung. Nach jahrelanger Praxis und hunderten Beratungstagen habe ich ein praxiserprobtes Framework entwickelt, das Unternehmern hilft, den Systemausstieg legal, sicher und ohne Stress umzusetzen.",
     "ctaText": "Kostenloses E-Book anfordern",
     "stats": [
-      { "value": "100+", "label": "Erfolgreiche Auswanderungen" },
-      { "value": "0%", "label": "Einkommensteuer in ausgewählten Ländern" },
-      { "value": "100%", "label": "Praxiserprobtes System" }
+      {
+        "value": "100+",
+        "label": "Erfolgreiche Auswanderungen"
+      },
+      {
+        "value": "0%",
+        "label": "Einkommensteuer in ausgewählten Ländern"
+      },
+      {
+        "value": "100%",
+        "label": "Praxiserprobtes System"
+      }
     ]
   },
   "modules": {
@@ -148,6 +159,16 @@
     "title": "Bereit für deinen persönlichen Exit?",
     "text": "Sichere dir jetzt deinen kostenlosen Ratgeber per WhatsApp und starte deinen Weg in die Unabhängigkeit.",
     "ctaText": "Jetzt E-Book anfordern"
+  },
+  "contact": {
+    "name": "Collin Osana",
+    "company": "Exit Kompass",
+    "street": "",
+    "zipCity": "",
+    "country": "Deutschland",
+    "email": "",
+    "phone": "+49 176 61726407",
+    "whatsapp": "+49 176 61726407"
   },
   "footer": {
     "copyright": "© 2026 EXIT-KOMPASS.de. Alle Rechte vorbehalten.",

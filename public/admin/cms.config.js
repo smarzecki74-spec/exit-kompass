@@ -20,6 +20,7 @@ window.CMS_CONFIG = {
     { key: 'testimonials', label: 'Stimmen', hint: 'Keine Einträge = Bereich wird auf der Seite ausgeblendet.' },
     { key: 'faq', label: 'FAQ' },
     { key: 'finalCta', label: 'Abschluss' },
+    { key: 'contact', label: 'Kontakt & Impressum', hint: 'Diese Daten erscheinen automatisch im Impressum und in der Datenschutzerklärung. Die WhatsApp-Nummer ist die, an die das Formular weiterleitet.' },
     { key: 'header', label: 'Kopfzeile' },
     { key: 'footer', label: 'Fußzeile' },
     { key: 'settings', label: 'Einstellungen', hint: 'Technische Werte – nur ändern, wenn du weißt, was sie tun.' },
@@ -53,10 +54,17 @@ window.CMS_CONFIG = {
 
   // Feldspezifische Einstellungen (überschreiben die Standards)
   fields: {
-    'settings.whatsappNumber': { label: 'WhatsApp-Nummer', type: 'tel', hint: 'Ohne + und ohne Leerzeichen, z. B. 4917661726407', pattern: '^\\d{8,15}$' },
-    'settings.whatsappMessage': { label: 'WhatsApp-Nachricht', type: 'textarea', hint: '{name} wird automatisch durch den Vornamen ersetzt.' },
+    'settings.whatsappMessage': { label: 'WhatsApp-Nachricht (Vorlage)', type: 'textarea', hint: '{name} wird automatisch durch den Vornamen ersetzt.' },
     'settings.leadEndpoint': { label: 'Lead-Endpoint (Apps Script)', type: 'url', hint: 'URL der Apps-Script-Web-App, endet auf /exec. Leer = Leads werden nicht gespeichert.', pattern: '^(https://.+)?$' },
-    'settings.contactName': { label: 'Ansprechpartner' },
+
+    'contact.name': { label: 'Name (Betreiber)', hint: 'Pflichtangabe fürs Impressum.' },
+    'contact.company': { label: 'Firma / Projektname', hint: 'Optional. Leer = Zeile wird im Impressum ausgeblendet.' },
+    'contact.street': { label: 'Straße und Hausnummer', hint: 'Pflichtangabe fürs Impressum (ladungsfähige Anschrift, kein Postfach).' },
+    'contact.zipCity': { label: 'PLZ und Ort', hint: 'z. B. 73033 Göppingen' },
+    'contact.country': { label: 'Land', hint: 'Optional.' },
+    'contact.email': { label: 'E-Mail', type: 'email', hint: 'Pflichtangabe fürs Impressum.', pattern: '^([^\\s@]+@[^\\s@]+\\.[^\\s@]+)?$' },
+    'contact.phone': { label: 'Telefon', type: 'tel', hint: 'Mit Ländervorwahl, z. B. +49 176 61726407. Leer = wird im Impressum ausgeblendet.', pattern: '^(\\+?[\\d\\s/()-]{8,24})?$' },
+    'contact.whatsapp': { label: 'WhatsApp-Nummer', type: 'tel', hint: 'Hierhin leitet das E-Book-Formular weiter. Mit Ländervorwahl, z. B. +49 176 61726407.', pattern: '^\\+?[\\d\\s/()-]{8,24}$' },
 
     'header.brandName': { label: 'Markenname', type: 'html' },
     'header.brandTagline': { label: 'Slogan' },

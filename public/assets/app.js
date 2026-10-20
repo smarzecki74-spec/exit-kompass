@@ -152,6 +152,16 @@
     return p;
   }
 
+  // WhatsApp-Nummer aus "Kontakt & Impressum" (z. B. "+49 176 61726407") → "4917661726407"
+  function whatsappDigits() {
+    var raw = String((C.contact && C.contact.whatsapp) || (C.settings && C.settings.whatsappNumber) || '');
+    var d = raw.replace(/[^\d+]/g, '');
+    if (d.indexOf('+') === 0) d = d.slice(1);
+    else if (d.indexOf('00') === 0) d = d.slice(2);
+    else if (d.charAt(0) === '0') d = '49' + d.slice(1);
+    return d.replace(/\D/g, '');
+  }
+
   function sendLead(data) {
     if (PREVIEW) { console.info('[Exit Kompass] Vorschau – Lead wird nicht gespeichert.'); return; }
     var url = C.settings && C.settings.leadEndpoint;
@@ -199,9 +209,9 @@
       timestamp: new Date().toISOString()
     });
 
-    var s = C.settings;
+    var s = C.settings || {};
     var msg = (s.whatsappMessage || '').replace('{name}', name);
-    var waUrl = 'https://wa.me/' + s.whatsappNumber + '?text=' + encodeURIComponent(msg);
+    var waUrl = 'https://wa.me/' + whatsappDigits() + '?text=' + encodeURIComponent(msg);
 
     // Kurz warten, damit der Beacon sicher raus ist, dann im selben Tab öffnen (kein Popup-Blocker)
     setTimeout(function () {

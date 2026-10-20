@@ -19,6 +19,71 @@ const ROUTES = {
   '/api/upload': upload,
 };
 
+// ---------- Impressum/Datenschutz: Kontaktdaten aus content.json serverseitig einsetzen ----------
+const LEGAL_PAGES = /^\/(impressum|datenschutz)(\.html)?\/?$/;
+const LABELS = {
+  name: 'Name',
+  street: 'Straße und Hausnummer',
+  zipCity: 'PLZ und Ort',
+  email: 'E-Mail-Adresse',
+  phone: 'Telefonnummer',
+  whatsapp: 'WhatsApp-Nummer',
+};
+
+function phoneDigits(raw) {
+  let d = String(raw || '').replace(/[^\d+]/g, '');
+  if (d.startsWith('+')) d = d.slice(1);
+  else if (d.startsWith('00')) d = d.slice(2);
+  else if (d.startsWith('0')) d = '49' + d.slice(1);
+  return d.replace(/\D/g, '');
+}
+
+async function renderLegal(request, env) {
+  const page = await env.ASSETS.fetch(request);
+  if (!page.ok || !(page.headers.get('Content-Type') || '').includes('text/html')) return page;
+
+  let contact = {};
+  try {
+    const res = await env.ASSETS.fetch(new Request(new URL('/content.json', request.url)));
+    if (res.ok) contact = (await res.json()).contact || {};
+  } catch {
+    return page; // Fallback: statischer Text aus der HTML-Datei
+  }
+  const val = (k) => String(contact[k] == null ? '' : contact[k]).trim();
+
+  const rewritten = new HTMLRewriter()
+    .on('[data-contact-line]', {
+      element(el) {
+        if (!val(el.getAttribute('data-contact-line'))) el.remove();
+      },
+    })
+    .on('[data-contact]', {
+      element(el) {
+        const key = el.getAttribute('data-contact');
+        const v = val(key);
+        if (!v) {
+          if (el.hasAttribute('data-optional')) return el.remove();
+          el.setInnerContent(
+            `<span class="rounded bg-red-500/20 px-1.5 py-0.5 text-red-300">[BITTE ERGÄNZEN: ${LABELS[key] || key}]</span>`,
+            { html: true }
+          );
+          el.removeAttribute('href');
+          return;
+        }
+        el.setInnerContent(v);
+        const kind = el.getAttribute('data-href');
+        if (kind === 'tel') el.setAttribute('href', 'tel:+' + phoneDigits(v));
+        if (kind === 'wa') el.setAttribute('href', 'https://wa.me/' + phoneDigits(v));
+        if (kind === 'mailto') el.setAttribute('href', 'mailto:' + v);
+      },
+    })
+    .transform(page);
+
+  const headers = new Headers(rewritten.headers);
+  headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  return new Response(rewritten.body, { status: rewritten.status, headers });
+}
+
 function pickHandler(mod, method) {
   const name = 'onRequest' + method.charAt(0) + method.slice(1).toLowerCase();
   return mod[name] || mod.onRequest || null;
@@ -48,6 +113,10 @@ export default {
         console.error(err);
         return fail('Serverfehler: ' + (err && err.message ? err.message : 'unbekannt'), 500);
       }
+    }
+
+    if (request.method === 'GET' && LEGAL_PAGES.test(url.pathname)) {
+      return renderLegal(request, env);
     }
 
     return env.ASSETS.fetch(request);

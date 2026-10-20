@@ -362,9 +362,10 @@
     } else {
       input = h('input', {
         class: 'field', id: id,
-        type: type === 'number' ? 'number' : type === 'url' ? 'url' : type === 'tel' ? 'tel' : 'text',
-        inputmode: type === 'tel' ? 'numeric' : null,
-        spellcheck: type === 'url' || type === 'tel' ? 'false' : null,
+        type: type === 'number' ? 'number' : type === 'url' ? 'url' : type === 'tel' ? 'tel' : type === 'email' ? 'email' : 'text',
+        inputmode: type === 'tel' ? 'tel' : type === 'email' ? 'email' : null,
+        spellcheck: type === 'url' || type === 'tel' || type === 'email' ? 'false' : null,
+        autocomplete: 'off',
       });
       input.value = value == null ? '' : value;
     }
