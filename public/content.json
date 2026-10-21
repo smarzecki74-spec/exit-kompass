@@ -19,7 +19,7 @@
     ],
     "ctaText": "Deinen Namen eintragen und dein E-Book per WhatsApp erhalten",
     "formBadge": "Kostenlos",
-    "formHeadline": "Sichere dir jetzt deinen kostenlosen Leitfaden",
+    "formHeadline": "Sichere dir jetzt deinen kostenlosen Fahrplan",
     "formText": "Trag deinen Vornamen und deine Mobilnummer ein – danach öffnet sich WhatsApp und du bekommst das E-Book persönlich zugeschickt.",
     "guarantee": "100% vertraulich. Kein Spam. Zustellung via WhatsApp."
   },
@@ -71,10 +71,10 @@
   "mentor": {
     "badge": "Dein Mentor",
     "title": "Wer steht hinter dem Exit Kompass?",
-    "name": "Collin Osana",
+    "name": "Collin Osana und Maria Del Muscio",
     "role": "Gründer & Experte für internationale Standortoptimierung",
     "photo": "",
-    "bio": "Vor wenigen Jahren stand ich vor exakt derselben Entscheidung. Nach jahrelanger Praxis und hunderten Beratungstagen habe ich ein praxiserprobtes Framework entwickelt, das Unternehmern hilft, den Systemausstieg legal, sicher und ohne Stress umzusetzen.",
+    "bio": "Vor wenigen Jahren standen wir vor exakt derselben Entscheidung. Nach jahrelanger Praxis und hunderten Beratungstagen haben wir ein praxiserprobtes Framework entwickelt, das Unternehmern hilft, den Systemausstieg legal, sicher und ohne Stress umzusetzen.",
     "ctaText": "Kostenloses E-Book anfordern",
     "stats": [
       {
@@ -126,7 +126,7 @@
         "role": "Agenturinhaber"
       },
       {
-        "quote": "Binnen 6 Monaten haben wir unseren Firmensitz verlegt und genießen nun ein völlig neues Freiheitsgefühl mit der Familie.",
+        "quote": "In 6 Monaten haben wir unseren Firmensitz verlegt und genießen nun ein völlig neues Freiheitsgefühl mit der Familie.",
         "author": "Elena K.",
         "role": "E-Commerce Gründerin"
       }
@@ -161,7 +161,7 @@
     "ctaText": "Jetzt E-Book anfordern"
   },
   "contact": {
-    "name": "Collin Osana",
+    "name": "Collin Osana und Maria Del Muscio",
     "company": "Exit Kompass",
     "street": "Beethovenstrasse",
     "zipCity": "73235 Weilheim",
