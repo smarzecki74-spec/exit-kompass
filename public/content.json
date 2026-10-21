@@ -69,9 +69,9 @@
     ]
   },
   "mentor": {
-    "badge": "Dein Mentor",
-    "title": "Wer steht hinter dem Exit Kompass?",
-    "name": "Collin Osana und Maria Del Muscio",
+    "badge": "Deine Mentoren",
+    "title": "Wer steht hinter dem<span class='gold-text'> Exit Kompass</span>?",
+    "name": "<span class='gold-text'> Collin Osana</span>? und <span class='gold-text'> Maria Del Muscio</span>?",
     "role": "Gründer & Experten für internationale Standortoptimierung",
     "photo": "/assets/img/whatsapp-image-2026-10-21-at-21-18-12-20261021-b89029.webp",
     "bio": "Vor wenigen Jahren standen wir vor exakt derselben Entscheidung. Nach jahrelanger Praxis und hunderten Beratungstagen haben wir ein praxiserprobtes Framework entwickelt, das Unternehmern hilft, den Systemausstieg legal, sicher und ohne Stress umzusetzen.",
