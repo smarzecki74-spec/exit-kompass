@@ -68,6 +68,7 @@ window.CMS_CONFIG = {
 
     'header.brandName': { label: 'Markenname', type: 'html' },
     'header.brandTagline': { label: 'Slogan' },
+    'header.logo': { label: 'Logo-Icon', type: 'image', hint: 'Quadratisches Bild (z. B. 256×256 px), ersetzt das Kompass-Icon links neben dem Markennamen. Leer = Kompass-Icon.' },
 
     'hero.badge': { label: 'Badge über der Überschrift' },
     'hero.title': { type: 'html' },

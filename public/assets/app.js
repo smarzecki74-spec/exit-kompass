@@ -44,7 +44,14 @@
     });
   }
   function bindIcons() {
+    var logo = C.header && C.header.logo;
     $all('[data-icon]').forEach(function (el) {
+      // Logo-Bild aus dem CMS (header.logo) ersetzt das Kompass-Icon; leer = Icon als Platzhalter
+      if (logo && el.hasAttribute('data-logo')) {
+        el.innerHTML = '<img src="' + esc(logo) + '" alt="" class="h-full w-full object-cover" decoding="async">';
+        el.classList.add('overflow-hidden', 'has-logo');
+        return;
+      }
       el.innerHTML = ic(el.getAttribute('data-icon'), el.getAttribute('data-icon-class') || 'w-5 h-5');
     });
   }
