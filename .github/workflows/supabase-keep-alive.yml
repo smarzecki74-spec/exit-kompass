@@ -1,6 +1,6 @@
 # Hält das Supabase-Projekt "exit-kompass" (Free-Plan) aktiv.
 # Supabase pausiert kostenlose Projekte nach 7 Tagen ohne Aktivität – dieser Job pingt alle 3 Tage.
-# Er ruft die DB-Funktion keep_alive() auf (aktualisiert die Tabelle heartbeat) und liest den Seiteninhalt.
+# Er ruft die DB-Funktion keep_alive() auf (aktualisiert die Tabelle heartbeat).
 #
 # Benötigt keine Secrets: URL und Publishable Key sind öffentlich (durch RLS abgesichert).
 # Optional überschreibbar über Repository-Variablen SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY.
@@ -46,11 +46,3 @@ jobs:
           done
           echo "::error::Supabase keep_alive() nicht erreichbar – Projekt evtl. schon pausiert? Im Supabase-Dashboard prüfen und wiederherstellen."
           exit 1
-
-      - name: Seiteninhalt lesen (prüft die öffentliche Leseregel)
-        run: |
-          set -euo pipefail
-          curl -sS --fail \
-            "$SUPABASE_URL/rest/v1/site_content?key=eq.main&select=version,updated_at" \
-            -H "apikey: $SUPABASE_KEY"
-          echo

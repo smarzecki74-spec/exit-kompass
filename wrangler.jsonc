@@ -1,5 +1,5 @@
-// Cloudflare Worker: statische Seite (public/) + Inhalte aus Supabase + CMS-API (/api/*)
-// Geheimnisse (CMS_USERS, CMS_SECRET, GITHUB_TOKEN, SUPABASE_SECRET_KEY) werden im Dashboard gesetzt,
+// Cloudflare Worker: statische Seite (public/) + CMS-API (/api/*) + Lead-Endpunkt (Supabase)
+// Geheimnisse (CMS_USERS, CMS_SECRET, GITHUB_TOKEN) werden im Dashboard gesetzt,
 // nicht hier – siehe README.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -9,10 +9,10 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/content.json", "/impressum*", "/datenschutz*"]
+    "run_worker_first": ["/api/*", "/impressum*", "/datenschutz*"]
   },
-  // Öffentliche Supabase-Werte (durch Row Level Security abgesichert: nur Leads anlegen,
-  // veröffentlichten Inhalt lesen). Der Secret Key gehört NICHT hierher.
+  // Öffentliche Supabase-Werte für das Lead-Formular (durch Row Level Security abgesichert:
+  // nur Leads anlegen). Die Website-Inhalte kommen NICHT aus Supabase, sondern aus content.json.
   "vars": {
     "SUPABASE_URL": "https://zgxejffscdpksaoedtkg.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Zq1-EjhV2IZkul1OfJE2vA_BLP1JOPe"

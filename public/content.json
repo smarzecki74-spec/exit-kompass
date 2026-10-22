@@ -1,6 +1,6 @@
 {
   "settings": {
-    "whatsappMessage": "Hey Liebes Exit Kompass - Team, ich hätte gerne denn zugriff, auf das E-Book.\n\nLiebe Grüße\n{name}",
+    "whatsappMessage": "Hey liebes Exit Kompass - Team, ich hätte gerne denn zugriff, auf das E-Book.\n\nLiebe Grüße\n{name}",
     "leadEndpoint": ""
   },
   "header": {

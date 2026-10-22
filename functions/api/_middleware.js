@@ -1,16 +1,11 @@
-// Schützt alle CMS-Routen unter /api/*. Nur /api/login ist ohne Sitzung erreichbar.
-// (/api/lead ist öffentlich und wird im Worker vor dieser Middleware behandelt.)
+// Schützt alle /api/*-Routen. Nur /api/login ist ohne Sitzung erreichbar.
 import { readSession, fail, missingEnv, sameOrigin } from '../../lib/cms.js';
-import { hasDbAdmin } from '../../lib/db.js';
 
 export async function onRequest(context) {
   const { request, env, next, data } = context;
   const url = new URL(request.url);
 
-  // GITHUB_TOKEN ist nur Pflicht, solange die Inhalte nicht in Supabase liegen (Bild-Upload braucht ihn weiterhin)
-  const required = ['CMS_USERS', 'CMS_SECRET'];
-  if (!hasDbAdmin(env)) required.push('GITHUB_TOKEN');
-  const missing = missingEnv(env, required);
+  const missing = missingEnv(env, ['CMS_USERS', 'CMS_SECRET', 'GITHUB_TOKEN']);
   if (missing.length) {
     return fail('CMS ist noch nicht eingerichtet. Fehlende Variablen in Cloudflare: ' + missing.join(', '), 503);
   }

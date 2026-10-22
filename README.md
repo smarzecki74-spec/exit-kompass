@@ -4,7 +4,7 @@ Statische Lead-Landingpage: Besucher tragen Vorname und Mobilnummer ein, der Lea
 
 Hosting: **Cloudflare Worker mit Static Assets** (Auto-Deploy aus GitHub, Konfiguration in `wrangler.jsonc`).
 Die API-Handler in `functions/api` sind im Pages-Functions-Format – das Projekt läuft also auch als Pages-Projekt.
-Datenbank: **Supabase** (Projekt `exit-kompass`, Region Frankfurt, Free-Plan) – Leads + CMS-Inhalte, siehe unten.
+Datenbank: **Supabase** (Projekt `exit-kompass`, Region Frankfurt, Free-Plan) – **nur für Leads/CRM**. Die Website-Inhalte bleiben in `content.json`.
 
 ## Struktur
 
@@ -31,9 +31,7 @@ apps-script/Code.gs     (alt) Google-Apps-Script, nur noch optional über settin
 ## Texte ändern
 
 **Am einfachsten über das CMS:** `https://exit-kompass.de/admin` → anmelden → bearbeiten → **Veröffentlichen**.
-Die Inhalte liegen in Supabase (Tabelle `site_content`), Veröffentlichen ist nach wenigen Sekunden live.
-`public/content.json` im Repo ist nur noch der **Notfall-Fallback** (wird ausgeliefert, wenn Supabase nicht erreichbar ist)
-und der Stand vom Import am 22.10.2026 – Änderungen dort wirken nicht mehr, solange die DB läuft.
+Alternativ `public/content.json` direkt bearbeiten → committen → pushen. Cloudflare deployt automatisch.
 
 - `contact.*` – Name, Anschrift, E-Mail, Telefon, WhatsApp. Erscheinen automatisch in Impressum + Datenschutz
   (der Worker setzt sie beim Ausliefern ein). `contact.whatsapp` ist auch das Ziel des E-Book-Formulars.
@@ -50,13 +48,10 @@ Projekt `exit-kompass` (Ref `zgxejffscdpksaoedtkg`, Region eu-central-1 / Frankf
 | Tabelle | Inhalt | Zugriff mit öffentlichem Key |
 |---|---|---|
 | `leads` | Vorname, Mobilnummer, Formular, Seite, Einwilligung + Einwilligungstext, Status, Notiz | nur **anlegen** (kein Lesen/Ändern) |
-| `site_content` | Seiteninhalt (`key = 'main'` = früher content.json) mit Versionsnummer | nur **lesen** |
-| `content_revisions` | jede Veröffentlichung mit Autor + Notiz (Versionsverlauf) | gesperrt |
+| `site_content`, `content_revisions` | **nicht in Benutzung** (Überbleibsel eines Tests am 22.10.2026, die Website liest sie nicht) | – |
 | `heartbeat` | letzter Keep-Alive-Ping | gesperrt (nur über `keep_alive()`) |
 
-- Veröffentlichen läuft über die DB-Funktion `publish_content()` – nur mit Secret Key, mit Konflikterkennung über die Versionsnummer.
 - Leads ansehen/bearbeiten: Supabase-Dashboard → Table Editor → `leads` (Spalte `status`: neu, kontaktiert, e-book gesendet, kunde, kein interesse).
-- Alte Version wiederherstellen: in `content_revisions` die gewünschte Version suchen und deren `content` im CMS neu veröffentlichen.
 - Schema ändern: neue Datei in `supabase/migrations/` anlegen und anwenden (Dashboard → SQL Editor oder `supabase db push`).
 
 ### Variablen im Cloudflare Worker
@@ -64,10 +59,9 @@ Projekt `exit-kompass` (Ref `zgxejffscdpksaoedtkg`, Region eu-central-1 / Frankf
 | Name | Wo | Wofür |
 |---|---|---|
 | `SUPABASE_URL` | `wrangler.jsonc` (vars) | öffentlich |
-| `SUPABASE_PUBLISHABLE_KEY` | `wrangler.jsonc` (vars) | öffentlich, durch RLS abgesichert – Formular + Seiteninhalt |
-| `SUPABASE_SECRET_KEY` | **Dashboard → Worker → Einstellungen → Variablen und Geheimnisse (Typ: Secret)** | CMS-Speichern. Wert: Supabase → Project Settings → API Keys → *Secret key* |
+| `SUPABASE_PUBLISHABLE_KEY` | `wrangler.jsonc` (vars) | öffentlich, durch RLS abgesichert – nur Lead-Formular |
 
-Ohne `SUPABASE_SECRET_KEY` läuft das CMS automatisch im alten GitHub-Modus weiter (Commit + Deploy).
+Die Website braucht keinen Supabase-Secret-Key. (Falls `SUPABASE_SECRET_KEY` im Worker gesetzt ist: wird nicht verwendet, kann gelöscht werden.)
 
 ### Keep-Alive
 
@@ -90,11 +84,8 @@ Schlägt der Job fehl, ist das Projekt evtl. schon pausiert → im Supabase-Dash
 
 ## CMS (`/admin`)
 
-Schlankes CMS mit zwei Speicher-Modi:
-- **Supabase** (aktiv, sobald `SUPABASE_SECRET_KEY` gesetzt ist): Veröffentlichen schreibt in `site_content`, live nach wenigen Sekunden, Verlauf in `content_revisions`.
-- **GitHub** (Fallback): Der Editor schreibt `public/content.json` ins Repo → Commit auf `main` → Auto-Deploy (ca. 1–2 Min.).
-
-Bilder landen in beiden Modi per Commit in `public/assets/img/` (braucht weiterhin `GITHUB_TOKEN`).
+Schlankes CMS ohne Datenbank: Der Editor liest und schreibt `public/content.json` direkt im GitHub-Repo.
+Jedes **Veröffentlichen** ist ein Commit auf `main` → Cloudflare baut automatisch neu (ca. 1–2 Min.).
 
 - Login für mehrere Benutzer, Passwörter nur als Hash gespeichert (PBKDF2), Sitzung 8 h per signiertem Cookie
 - Live-Vorschau des Entwurfs (Desktop/Mobil), Entwürfe bleiben im Browser erhalten
