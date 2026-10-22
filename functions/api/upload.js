@@ -16,6 +16,7 @@ function slug(name) {
 }
 
 export async function onRequestPost({ request, env, data }) {
+  if (!env.GITHUB_TOKEN) return fail('Bild-Upload ist nicht eingerichtet (GITHUB_TOKEN fehlt in Cloudflare).', 503);
   let form;
   try { form = await request.formData(); } catch { return fail('Ungültiger Upload.'); }
   const file = form.get('file');

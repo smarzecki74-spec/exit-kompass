@@ -14,6 +14,7 @@
     content: null,   // Arbeitskopie
     orig: null,      // zuletzt veröffentlichte Version
     sha: null,
+    mode: 'github', // 'db' = Inhalte in Supabase (sofort live), 'github' = Commit + Deploy
     section: null,
     open: {},        // aufgeklappte Listeneinträge
     preview: false,
@@ -242,6 +243,7 @@
     return api('content').then(function (d) {
       state.orig = d.content;
       state.sha = d.sha;
+      state.mode = d.mode || 'github';
       var keepLocal = state.content && !same(state.content, state.orig); // nach Re-Login im laufenden Editor
       if (!keepLocal) state.content = clone(d.content);
       checkDraft();
@@ -728,7 +730,7 @@
       clean: 'Alles veröffentlicht',
       dirty: 'Nicht veröffentlichte Änderungen',
       saving: 'Wird veröffentlicht …',
-      saved: 'Veröffentlicht – live in ca. 1–2 Min.',
+      saved: state.mode === 'db' ? 'Veröffentlicht – ist live' : 'Veröffentlicht – live in ca. 1–2 Min.',
     }[s];
     $('#btn-publish').disabled = !dirty || state.busy;
     $('#btn-discard').disabled = !dirty || state.busy;
@@ -800,7 +802,8 @@
         updateStatus(same(state.content, snapshot) ? 'saved' : null);
         renderNav();
         if ($('#editor .banner')) renderSection();
-        toast('Veröffentlicht', 'Cloudflare baut die Seite neu – in ca. 1–2 Minuten live.', 'ok');
+        state.mode = d.mode || state.mode;
+        toast('Veröffentlicht', state.mode === 'db' ? 'Die Änderungen sind in wenigen Sekunden live.' : 'Cloudflare baut die Seite neu – in ca. 1–2 Minuten live.', 'ok');
       })
       .catch(function (err) {
         state.busy = false;

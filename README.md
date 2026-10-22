@@ -1,9 +1,10 @@
 # EXIT-KOMPASS.de – Landingpage
 
-Statische Lead-Landingpage: Besucher tragen Vorname und Mobilnummer ein, der Lead landet im Google Sheet, danach öffnet sich WhatsApp mit einer vorbereiteten Nachricht an Collin.
+Statische Lead-Landingpage: Besucher tragen Vorname und Mobilnummer ein, der Lead landet in der Supabase-Datenbank, danach öffnet sich WhatsApp mit einer vorbereiteten Nachricht an Collin.
 
 Hosting: **Cloudflare Worker mit Static Assets** (Auto-Deploy aus GitHub, Konfiguration in `wrangler.jsonc`).
 Die API-Handler in `functions/api` sind im Pages-Functions-Format – das Projekt läuft also auch als Pages-Projekt.
+Datenbank: **Supabase** (Projekt `exit-kompass`, Region Frankfurt, Free-Plan) – Leads + CMS-Inhalte, siehe unten.
 
 ## Struktur
 
@@ -19,29 +20,60 @@ public/                 ← wird von Cloudflare Pages ausgeliefert (Build-Output
   assets/styles.css     Tailwind-Build (wird beim Deploy neu gebaut)
   assets/fonts/         Lokal gehostete Schriften (DSGVO)
 src/input.css           Tailwind-Quelle + eigene Styles
-apps-script/Code.gs     Google-Apps-Script für die Lead-Speicherung
+lib/db.js               Supabase-Anbindung (REST, ohne SDK)
+functions/api/lead.js   POST /api/lead – Formular → Tabelle leads
+supabase/migrations/    Datenbankschema inkl. Zugriffsregeln (RLS)
+.github/workflows/      supabase-keep-alive.yml – pingt die DB alle 3 Tage
+apps-script/Code.gs     (alt) Google-Apps-Script, nur noch optional über settings.leadEndpoint
 .node-version           Node-Version für den Cloudflare-Build
 ```
 
 ## Texte ändern
 
 **Am einfachsten über das CMS:** `https://exit-kompass.de/admin` → anmelden → bearbeiten → **Veröffentlichen**.
-Alternativ `public/content.json` direkt bearbeiten → committen → pushen. Cloudflare deployt automatisch.
+Die Inhalte liegen in Supabase (Tabelle `site_content`), Veröffentlichen ist nach wenigen Sekunden live.
+`public/content.json` im Repo ist nur noch der **Notfall-Fallback** (wird ausgeliefert, wenn Supabase nicht erreichbar ist)
+und der Stand vom Import am 22.10.2026 – Änderungen dort wirken nicht mehr, solange die DB läuft.
 
 - `contact.*` – Name, Anschrift, E-Mail, Telefon, WhatsApp. Erscheinen automatisch in Impressum + Datenschutz
   (der Worker setzt sie beim Ausliefern ein). `contact.whatsapp` ist auch das Ziel des E-Book-Formulars.
 - `settings.whatsappMessage` – `{name}` wird durch den Vornamen ersetzt
-- `settings.leadEndpoint` – URL der Apps-Script-Web-App (siehe unten)
+- `settings.leadEndpoint` – optional: zusätzliches Ziel für Leads (z. B. Apps-Script-Web-App). Leer lassen = nur Supabase
 - `mentor.photo` – z. B. `/assets/img/collin.jpg` (Datei in `public/assets/img/` legen). Leer = Initialen.
 - `testimonials.items` – leeres Array blendet die Sektion aus
 - Icons: Namen wie in `scripts/build-icons.mjs` (MAP). Neue Icons dort ergänzen und `npm run icons` ausführen.
 
-## Lead-Speicherung einrichten (einmalig)
+## Datenbank (Supabase)
 
-1. [script.google.com](https://script.google.com) → Neues Projekt → Inhalt von `apps-script/Code.gs` einfügen
-2. **Bereitstellen → Neue Bereitstellung → Web-App**, „Ausführen als: Ich“, „Zugriff: Jeder“
-3. Web-App-URL (`…/exec`) in `content.json` → `settings.leadEndpoint` eintragen und pushen
-4. Test: Formular absenden → neue Zeile im Tab „Leads“
+Projekt `exit-kompass` (Ref `zgxejffscdpksaoedtkg`, Region eu-central-1 / Frankfurt, Free-Plan).
+
+| Tabelle | Inhalt | Zugriff mit öffentlichem Key |
+|---|---|---|
+| `leads` | Vorname, Mobilnummer, Formular, Seite, Einwilligung + Einwilligungstext, Status, Notiz | nur **anlegen** (kein Lesen/Ändern) |
+| `site_content` | Seiteninhalt (`key = 'main'` = früher content.json) mit Versionsnummer | nur **lesen** |
+| `content_revisions` | jede Veröffentlichung mit Autor + Notiz (Versionsverlauf) | gesperrt |
+| `heartbeat` | letzter Keep-Alive-Ping | gesperrt (nur über `keep_alive()`) |
+
+- Veröffentlichen läuft über die DB-Funktion `publish_content()` – nur mit Secret Key, mit Konflikterkennung über die Versionsnummer.
+- Leads ansehen/bearbeiten: Supabase-Dashboard → Table Editor → `leads` (Spalte `status`: neu, kontaktiert, e-book gesendet, kunde, kein interesse).
+- Alte Version wiederherstellen: in `content_revisions` die gewünschte Version suchen und deren `content` im CMS neu veröffentlichen.
+- Schema ändern: neue Datei in `supabase/migrations/` anlegen und anwenden (Dashboard → SQL Editor oder `supabase db push`).
+
+### Variablen im Cloudflare Worker
+
+| Name | Wo | Wofür |
+|---|---|---|
+| `SUPABASE_URL` | `wrangler.jsonc` (vars) | öffentlich |
+| `SUPABASE_PUBLISHABLE_KEY` | `wrangler.jsonc` (vars) | öffentlich, durch RLS abgesichert – Formular + Seiteninhalt |
+| `SUPABASE_SECRET_KEY` | **Dashboard → Worker → Einstellungen → Variablen und Geheimnisse (Typ: Secret)** | CMS-Speichern. Wert: Supabase → Project Settings → API Keys → *Secret key* |
+
+Ohne `SUPABASE_SECRET_KEY` läuft das CMS automatisch im alten GitHub-Modus weiter (Commit + Deploy).
+
+### Keep-Alive
+
+Supabase pausiert Free-Projekte nach 7 Tagen ohne Aktivität. `.github/workflows/supabase-keep-alive.yml` ruft alle 3 Tage
+`keep_alive()` auf (sichtbar in Tabelle `heartbeat`). Manuell starten: GitHub → Actions → *Supabase Keep-Alive* → *Run workflow*.
+Schlägt der Job fehl, ist das Projekt evtl. schon pausiert → im Supabase-Dashboard wiederherstellen.
 
 ## Deployment (GitHub → Cloudflare Pages)
 
@@ -58,8 +90,11 @@ Alternativ `public/content.json` direkt bearbeiten → committen → pushen. Clo
 
 ## CMS (`/admin`)
 
-Schlankes CMS ohne Datenbank: Der Editor liest und schreibt `public/content.json` direkt im GitHub-Repo.
-Jedes **Veröffentlichen** ist ein Commit auf `main` → Cloudflare Pages baut automatisch neu (ca. 1–2 Min.).
+Schlankes CMS mit zwei Speicher-Modi:
+- **Supabase** (aktiv, sobald `SUPABASE_SECRET_KEY` gesetzt ist): Veröffentlichen schreibt in `site_content`, live nach wenigen Sekunden, Verlauf in `content_revisions`.
+- **GitHub** (Fallback): Der Editor schreibt `public/content.json` ins Repo → Commit auf `main` → Auto-Deploy (ca. 1–2 Min.).
+
+Bilder landen in beiden Modi per Commit in `public/assets/img/` (braucht weiterhin `GITHUB_TOKEN`).
 
 - Login für mehrere Benutzer, Passwörter nur als Hash gespeichert (PBKDF2), Sitzung 8 h per signiertem Cookie
 - Live-Vorschau des Entwurfs (Desktop/Mobil), Entwürfe bleiben im Browser erhalten

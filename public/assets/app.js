@@ -162,18 +162,23 @@
     return d.replace(/\D/g, '');
   }
 
-  function sendLead(data) {
-    if (PREVIEW) { console.info('[Exit Kompass] Vorschau – Lead wird nicht gespeichert.'); return; }
-    var url = C.settings && C.settings.leadEndpoint;
-    if (!url) { console.warn('[Exit Kompass] leadEndpoint fehlt in content.json – Lead wird nicht gespeichert.'); return; }
-    var body = JSON.stringify(data);
+  // Lead → /api/lead (Worker → Supabase). Optional zusätzlich an settings.leadEndpoint (z. B. Google Apps Script).
+  function beacon(url, body, sameOrigin) {
     // sendBeacon überlebt die Weiterleitung zu WhatsApp
     try {
       if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: 'text/plain;charset=utf-8' }))) return;
     } catch (e) { /* Fallback unten */ }
     try {
-      fetch(url, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body });
+      fetch(url, { method: 'POST', mode: sameOrigin ? 'same-origin' : 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body });
     } catch (e) { console.error(e); }
+  }
+
+  function sendLead(data) {
+    if (PREVIEW) { console.info('[Exit Kompass] Vorschau – Lead wird nicht gespeichert.'); return; }
+    var body = JSON.stringify(data);
+    beacon('/api/lead', body, true);
+    var extra = C.settings && C.settings.leadEndpoint;
+    if (extra) beacon(extra, body, false);
   }
 
   function onSubmit(e) {
@@ -200,12 +205,14 @@
     btn.disabled = true;
     $('[data-label]', btn).textContent = 'WhatsApp wird geöffnet …';
 
+    var consentLabel = form.querySelector('label[for="' + form.elements.privacy.id + '"]');
     sendLead({
       name: name,
       phone: phone,
       source: form.getAttribute('data-form'),
       page: location.href,
       consent: true,
+      consentText: consentLabel ? consentLabel.textContent.trim() : '',
       timestamp: new Date().toISOString()
     });
 

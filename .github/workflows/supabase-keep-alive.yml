@@ -1,0 +1,56 @@
+# Hält das Supabase-Projekt "exit-kompass" (Free-Plan) aktiv.
+# Supabase pausiert kostenlose Projekte nach 7 Tagen ohne Aktivität – dieser Job pingt alle 3 Tage.
+# Er ruft die DB-Funktion keep_alive() auf (aktualisiert die Tabelle heartbeat) und liest den Seiteninhalt.
+#
+# Benötigt keine Secrets: URL und Publishable Key sind öffentlich (durch RLS abgesichert).
+# Optional überschreibbar über Repository-Variablen SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY.
+
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # alle 3 Tage um 06:17 UTC (krumme Minute, um die Lastspitze zur vollen Stunde zu meiden)
+    - cron: '17 6 */3 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-keep-alive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://zgxejffscdpksaoedtkg.supabase.co' }}
+      SUPABASE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_Zq1-EjhV2IZkul1OfJE2vA_BLP1JOPe' }}
+    steps:
+      - name: keep_alive() aufrufen
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o response.txt -w '%{http_code}' \
+              -X POST "$SUPABASE_URL/rest/v1/rpc/keep_alive" \
+              -H "apikey: $SUPABASE_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"p_source":"github-action"}' || echo 000)
+            if [ "$code" = "200" ]; then
+              echo "Letzter Ping: $(cat response.txt)"
+              exit 0
+            fi
+            echo "Versuch $attempt fehlgeschlagen (HTTP $code): $(cat response.txt 2>/dev/null || true)"
+            sleep 20
+          done
+          echo "::error::Supabase keep_alive() nicht erreichbar – Projekt evtl. schon pausiert? Im Supabase-Dashboard prüfen und wiederherstellen."
+          exit 1
+
+      - name: Seiteninhalt lesen (prüft die öffentliche Leseregel)
+        run: |
+          set -euo pipefail
+          curl -sS --fail \
+            "$SUPABASE_URL/rest/v1/site_content?key=eq.main&select=version,updated_at" \
+            -H "apikey: $SUPABASE_KEY"
+          echo

@@ -1,5 +1,6 @@
 /**
- * Cloudflare Worker – liefert die statische Seite aus public/ und das CMS-API unter /api/*.
+ * Cloudflare Worker – liefert die statische Seite aus public/, die Inhalte (/content.json) aus Supabase
+ * und das CMS-API unter /api/*.
  * Die API-Handler liegen in functions/api (gleiches Format wie Pages Functions),
  * damit das Projekt sowohl als Worker als auch als Pages-Projekt läuft.
  */
@@ -9,8 +10,11 @@ import * as logout from '../functions/api/logout.js';
 import * as me from '../functions/api/me.js';
 import * as content from '../functions/api/content.js';
 import * as upload from '../functions/api/upload.js';
+import * as lead from '../functions/api/lead.js';
 import { fail } from '../lib/cms.js';
+import { hasDb, hasDbAdmin, loadContent } from '../lib/db.js';
 
+// CMS-Routen (hinter Login-Middleware)
 const ROUTES = {
   '/api/login': login,
   '/api/logout': logout,
@@ -19,7 +23,63 @@ const ROUTES = {
   '/api/upload': upload,
 };
 
-// ---------- Impressum/Datenschutz: Kontaktdaten aus content.json serverseitig einsetzen ----------
+// Öffentliche Routen (ohne Login)
+const PUBLIC_ROUTES = {
+  '/api/lead': lead,
+};
+
+// Wie lange Cloudflare den Seiteninhalt aus der DB zwischenspeichert (Sekunden).
+// Kurz halten: CMS-Änderungen sollen praktisch sofort live sein.
+const CONTENT_EDGE_CACHE = 15;
+
+// ---------- Inhalte: Supabase zuerst, sonst public/content.json ----------
+// Die DB ist nur dann die Quelle, wenn das CMS auch in die DB schreibt (SUPABASE_SECRET_KEY gesetzt).
+// Sonst liefe das CMS im GitHub-Modus und seine Änderungen wären auf der Seite unsichtbar.
+function contentFromDb(env) {
+  return hasDb(env) && hasDbAdmin(env);
+}
+
+async function getSiteContent(request, env, ctx) {
+  if (contentFromDb(env)) {
+    const cache = caches.default;
+    const cacheKey = new Request(new URL('/__content-cache', request.url).toString());
+    const hit = await cache.match(cacheKey);
+    if (hit) return { content: await hit.json(), source: 'db-cache' };
+
+    try {
+      const r = await loadContent(env);
+      if (r.ok) {
+        const res = new Response(JSON.stringify(r.content), {
+          headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${CONTENT_EDGE_CACHE}` },
+        });
+        ctx.waitUntil(cache.put(cacheKey, res));
+        return { content: r.content, source: 'db' };
+      }
+      console.error('[content] Supabase-Fehler', r.status, r.message);
+    } catch (err) {
+      console.error('[content] Supabase nicht erreichbar', err);
+    }
+  }
+  // Fallback: Datei aus dem Repo
+  const res = await env.ASSETS.fetch(new Request(new URL('/content.json', request.url)));
+  if (!res.ok) return null;
+  return { content: await res.json(), source: 'file' };
+}
+
+async function serveContentJson(request, env, ctx) {
+  const c = await getSiteContent(request, env, ctx);
+  if (!c) return env.ASSETS.fetch(request);
+  return new Response(JSON.stringify(c.content), {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=0, must-revalidate',
+      'X-Content-Source': c.source,
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
+
+// ---------- Impressum/Datenschutz: Kontaktdaten aus den Inhalten serverseitig einsetzen ----------
 const LEGAL_PAGES = /^\/(impressum|datenschutz)(\.html)?\/?$/;
 const LABELS = {
   name: 'Name',
@@ -38,14 +98,14 @@ function phoneDigits(raw) {
   return d.replace(/\D/g, '');
 }
 
-async function renderLegal(request, env) {
+async function renderLegal(request, env, ctx) {
   const page = await env.ASSETS.fetch(request);
   if (!page.ok || !(page.headers.get('Content-Type') || '').includes('text/html')) return page;
 
   let contact = {};
   try {
-    const res = await env.ASSETS.fetch(new Request(new URL('/content.json', request.url)));
-    if (res.ok) contact = (await res.json()).contact || {};
+    const c = await getSiteContent(request, env, ctx);
+    if (c && c.content) contact = c.content.contact || {};
   } catch {
     return page; // Fallback: statischer Text aus der HTML-Datei
   }
@@ -92,9 +152,23 @@ function pickHandler(mod, method) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const path = url.pathname.replace(/\/+$/, '') || '/';
 
+    // Öffentliche API (Lead-Formular)
+    if (PUBLIC_ROUTES[path]) {
+      const handler = pickHandler(PUBLIC_ROUTES[path], request.method);
+      if (!handler) return fail('Methode nicht erlaubt.', 405);
+      try {
+        return await handler({ request, env, data: {}, waitUntil: ctx.waitUntil.bind(ctx) });
+      } catch (err) {
+        console.error(err);
+        return fail('Serverfehler.', 500);
+      }
+    }
+
+    // CMS-API
     if (url.pathname.startsWith('/api/')) {
-      const mod = ROUTES[url.pathname.replace(/\/+$/, '')];
+      const mod = ROUTES[path];
       if (!mod) return fail('Nicht gefunden.', 404);
       const handler = pickHandler(mod, request.method);
       if (!handler) return fail('Methode nicht erlaubt.', 405);
@@ -115,8 +189,12 @@ export default {
       }
     }
 
+    if ((request.method === 'GET' || request.method === 'HEAD') && path === '/content.json') {
+      return serveContentJson(request, env, ctx);
+    }
+
     if (request.method === 'GET' && LEGAL_PAGES.test(url.pathname)) {
-      return renderLegal(request, env);
+      return renderLegal(request, env, ctx);
     }
 
     return env.ASSETS.fetch(request);
